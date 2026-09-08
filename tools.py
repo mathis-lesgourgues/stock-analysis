@@ -1,20 +1,38 @@
-import time
 import pandas as pd
 import yfinance as yf
 
-ticker = "TTE"
 
+def get_recent_news(ticker: str, max_items: int = 5):
+    results = yf.Search(ticker).news
+    return [{"title": item["title"], "link": item["link"]} 
+            for item in results[:max_items]]
+     
 
-def get_recent_news(ticker: str): 
-    search = yf.Search(ticker)
-    print(search.news)
+def get_dividend_history(ticker: str): 
+    """
+    Params: 
+        str: ticker corresponsing to the analyzed stock 
+    Returns:
+        pd.Series with value of the dividend
+    """
+    return yf.Ticker(ticker).get_dividends(period='10Y')
 
 def get_price_trend(ticker: str): 
-    return True 
+    """
+    Params: 
+        str: ticker corresponding to the analyzed stock  
+    Returns : 
+         pd.DataFrame: dataframe with the following columns ['Open', 'High', 
+         'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits']
+    """
+    return yf.Ticker(ticker).history(period="1Y") 
 
 def get_extra_fundamentals(ticket: str):
     return True 
 
 
-if __name__ == "__main__":
-    get_recent_news(ticker)
+test_ticker = "ASML"
+news = get_recent_news(test_ticker)
+print(news)
+#div = get_dividend_history(ticker)
+# #print(div)
