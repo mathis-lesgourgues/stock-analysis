@@ -1,13 +1,14 @@
 import pandas as pd
 import yfinance as yf
+from langchain.tools import tool
 
-
+@tool  
 def get_recent_news(ticker: str, max_items: int = 5):
     results = yf.Search(ticker).news
     return [{"title": item["title"], "link": item["link"]} 
             for item in results[:max_items]]
      
-
+@tool 
 def get_dividend_history(ticker: str): 
     """
     Params: 
@@ -17,6 +18,8 @@ def get_dividend_history(ticker: str):
     """
     return yf.Ticker(ticker).get_dividends(period='10Y')
 
+
+@tool 
 def get_price_trend(ticker: str): 
     """
     Params: 
@@ -27,6 +30,8 @@ def get_price_trend(ticker: str):
     """
     return yf.Ticker(ticker).history(period="1Y") 
 
+
+@tool 
 def get_extra_fundamentals(ticket: str):
     return True 
 

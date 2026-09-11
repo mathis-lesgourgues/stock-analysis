@@ -1,5 +1,5 @@
 import time
-import pandas as pd
+import json
 import yfinance as yf
 from yfinance import EquityQuery
 
@@ -22,15 +22,16 @@ FIELDS = {
     "marketCap": "market_cap",
 }
 
-euronext_exchanges = [
-    "PAR",  # Paris
+european_regions = [
+    "at", "be", "ch", "cz", "de", "dk", "ee", "es", "fi", "fr", "gr",
+    "hu", "ie", "is", "it", "lt", "lv", "nl", "no", "pl", "pt", "ro", "se",
 ]
 
 query = EquityQuery('and', [
-    # Euronext-listed
+    # Headquartered in Europe
     EquityQuery('is-in', [
-        'exchange',
-        *euronext_exchanges
+        'region',
+        *european_regions
     ]),
     # 0 < P/E < 15
     EquityQuery('btwn', [
@@ -46,7 +47,7 @@ query = EquityQuery('and', [
 ])
 
 def get_universe() -> list[str]:
-    result = yf.screen(query, size=10, sortField='peratio.lasttwelvemonths', sortAsc=True)
+    result = yf.screen(query, size=100)
     return [stock['symbol'] for stock in result['quotes']]
 
 def fetch_fundamentals(tickers):
@@ -76,4 +77,4 @@ def fetch_fundamentals(tickers):
 
         time.sleep(0.1)
 
-    return pd.DataFrame(rows)
+    return json.dumps(rows, default=str)
