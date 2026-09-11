@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from datetime import datetime
@@ -14,7 +15,7 @@ load_dotenv()
 JUNIOR_SCREENER_PROMPT = """You are a junior equity research analyst doing a first-pass screen.
 
 You will receive a JSON array of stocks, pre-filtered from European exchanges
-on low trailing P/E and market cap > €5B. Each record may include: ticker, name,
+on low trailing P/E and market cap > €50B. Each record may include: ticker, name,
 sector, industry, pe, forward_pe, peg, price_to_book, ev_ebitda, roe,
 debt_to_equity, revenue_growth, earnings_growth, eps, net_margin, market_cap.
 
@@ -39,6 +40,11 @@ paragraphs or restate the raw JSON fields:
    possible value trap instead of a clean bargain.
 
 Keep the entire response under 700 words total so all 5-10 rows fit.
+
+Output format: the FIRST line of your response must be a JSON array of the
+ticker symbols you flag, ordered from most to least compelling, and nothing
+else on that line (e.g. ["AAA.PA","BBB.DE"]). Leave a blank line, then give
+the analysis table described below.
 
 Rules:
 - Use only the numbers in the table. Never invent, estimate, or recall
@@ -76,6 +82,19 @@ def ask_agent(table_json: str):
     )
 
     return response.choices[0].message.content
+
+
+def parse_tickers(result: str) -> list[str]:
+    """Extract the flagged-ticker JSON array from the screener's first line."""
+    first_line = result.strip().splitlines()[0] if result.strip() else ""
+    try:
+        tickers = json.loads(first_line)
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(tickers, list):
+        return []
+    return [str(t) for t in tickers]
+
 
 if __name__ == "__main__":
     table_json = fetch_fundamentals(TICKERS)

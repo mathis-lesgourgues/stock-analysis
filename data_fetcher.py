@@ -39,10 +39,10 @@ query = EquityQuery('and', [
         0,
         15
     ]),
-    # Market cap > 5 billion
+    # Market cap > 50 billion
     EquityQuery('gt', [
         'intradaymarketcap',
-        5_000_000_000
+        50_000_000_000
     ])
 ])
 
