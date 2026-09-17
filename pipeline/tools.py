@@ -105,3 +105,48 @@ def get_price_trend(ticker: str):
 def get_extra_fundamentals(ticker: str):
     """Placeholder for additional fundamentals not yet implemented."""
     return True
+
+
+ 
+
+def get_industry_key(ticker: str):
+    try:
+        return yf.Ticker(ticker).get_info().get("industryKey")
+    except Exception:
+        return None
+
+def _get_industry_reports(ticker: str):
+    industry_key = get_industry_key(ticker)
+    if industry_key is None:
+        return None
+
+    try:
+        return yf.Industry(industry_key).research_reports
+    except Exception:
+        return None
+
+@tool
+def get_industry_reports(ticker: str):
+    """
+    To complete 
+    """
+    return _get_industry_reports(ticker)
+
+def _get_insider_purchases(ticker: str):
+    try:
+        df = yf.Ticker(ticker).get_insider_purchases()
+    except Exception:
+        return None
+
+    if df is None or df.empty:
+        return "No insider purchase data found for this ticker."
+
+    return json.dumps(df.to_dict(orient="records"), default=str)
+
+
+@tool
+def get_insider_purchases(ticker: str):
+    """Get recent insider purchase activity for a stock ticker - includes
+    officers, directors, and major shareholders (10%+ stake). Returns a
+    message if no data is available."""
+    return _get_insider_purchases(ticker)
