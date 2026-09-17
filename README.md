@@ -17,7 +17,6 @@ financial snapshot, and industry context - built with LangChain and Groq.
      currently happening with the company.
    - `finance_agent.py` - looks at price trend, dividend history, and
      analyst recommendations.
-   - `industry_agent.py` - looks at the company's industry context.
 5. The manager combines what it learns into a final verdict: whether the
    situation looks structural (a real underlying issue) or conjunctural
    (a temporary move), with a confidence level and the evidence behind it.
