@@ -5,6 +5,8 @@ from langchain_groq import ChatGroq
 from news_agent import analyze_news
 from finance_agent import analyze_finance
 
+from langchain_core.callbacks import get_usage_metadata_callback
+
 @tool
 def investigate_news(ticker: str) -> str:
     """Get a news/events analysis for this ticker - recent headlines and
@@ -44,8 +46,23 @@ manager_agent = create_agent(
 )
 
 
-def analyze_company(ticker: str) -> str:
-    result = manager_agent.invoke(
-        {"messages": [{"role": "user", "content": f"Ticker: {ticker}"}]}
-    )
-    return result["messages"][-1].content
+
+
+
+def analyze_company(ticker: str) -> dict:
+    with get_usage_metadata_callback() as cb:
+        result = manager_agent.invoke(
+            {"messages": [{"role": "user", "content": f"Ticker: {ticker}"}]}
+        )
+
+        tool_call_count = sum(
+            len(msg.tool_calls)
+            for msg in result["messages"]
+            if hasattr(msg, "tool_calls") and msg.tool_calls
+        )
+
+        return {
+            "report": result["messages"][-1].content,
+            "tool_calls": tool_call_count,
+            "tokens": cb.usage_metadata,
+        }

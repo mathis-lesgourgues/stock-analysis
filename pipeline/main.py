@@ -16,9 +16,12 @@ def main():
         sys.exit(1)
 
     print(f"Ticker trouvé : {ticker}\n")
- 
-    report = analyze_company(ticker)
-    print(report)
+
+    result = analyze_company(ticker)
+    print(result["report"])
+    print(f"\n--- Stats ---")
+    print(f"Tool calls: {result['tool_calls']}")
+    print(f"Tokens: {result['tokens']}")
 
 if __name__ == "__main__":
     main()
