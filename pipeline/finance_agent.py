@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os 
-from tools import get_analyst_recommendation, get_dividend_history, get_price_trend
+from tools import get_analyst_recommendation, get_dividend_history, get_price_trend, get_insider_purchases
 
 
 FINANCE_AGENT_PROMPT = """You are a financial analyst at an investment bank.
@@ -14,6 +14,7 @@ stock's current financial standing using the tools available:
 - get_dividend_history: dividend payment history and recent changes.
 - get_analyst_recommendation: recent analyst ratings (buy/hold/sell counts
   by period).
+- get_insider_purchases: recent insider purchases
 
 Decide which tools are actually relevant given what you're seeing - not
 every stock needs all three checked with equal depth. A stock with a sharp
