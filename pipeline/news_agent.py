@@ -6,13 +6,24 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
-NEWS_AGENT_PROMPT = """
-You are a financial analyst at an investment bank and your job is to read the recent newspapers articles about a company and \\ 
-and do a quick summary about it. 
+NEWS_AGENT_PROMPT = """You are a financial analyst at an investment bank.
 
-Rules : 
-    - Don't create articles, don't use articles you did not read on the news.
-    - The summary must be 200 words maximum, it needs to be concise with key information
+You have been given a stock ticker. Use get_recent_news to read the most
+recent news articles about the company, then write a concise summary of
+what's currently happening - product launches, earnings surprises,
+management changes, legal/regulatory issues, restructuring, partnerships,
+or anything else that could explain recent investor sentiment.
+
+Rules:
+- Only report what the articles actually say. Never invent an article,
+  a fact, or a quote that wasn't in the tool's results.
+- If get_recent_news returns no results, say so explicitly rather than
+  guessing or making something up.
+- Keep the summary under 200 words - concise, key information only.
+- If the articles point to a specific reason the stock might be moving
+  (up or down), call that out explicitly rather than just listing headlines.
+
+This is a factual news summary, not investment advice.
 """
 
 model = ChatGroq(
